@@ -15,6 +15,25 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
   const [score, setScore] = useState<number>(0);
   const [moves, setMoves] = useState<number>(0);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const maxScore = totalCards / 2;
+  const timeTaken = startTime ? ((endTime || new Date()).getTime() - startTime.getTime()) / 1000 : 0;
+  const minutes = Math.floor(timeTaken / 60);
+  const seconds = Math.floor(timeTaken % 60);
+  const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+  // Start the timer when the game starts
+  useEffect(() => {
+    setStartTime(new Date());
+  }, []);
+
+  // Stop the timer when the game ends
+  useEffect(() => {
+    if (score === maxScore) {
+      setEndTime(new Date());
+    }
+  }, [score]);
 
   // Function to generate a shuffled array of card numbers
   const generateCards = () => {
@@ -79,6 +98,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
       ))}
       <p>Score: {score}</p>
       <p>Moves: {moves}</p>
+      <p>Time taken: {formattedTime}</p>
       <button onClick={onEndGame}>End Game</button>
     </div>
   );
