@@ -14,6 +14,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   const [clickedCards, setClickedCards] = useState<{ index: number, value: number }[]>([]);
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
   const [score, setScore] = useState<number>(0);
+  const [moves, setMoves] = useState<number>(0);
 
   // Function to generate a shuffled array of card numbers
   const generateCards = () => {
@@ -47,7 +48,6 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
             if (newMatchedCards.filter(card => card === firstCard).length === 2) {
               setScoredCards((prevScored) => [...prevScored, firstCard]);
             }
-
             return newMatchedCards;
           });
         }
@@ -58,6 +58,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
       }
       return newClickedCards;
     });
+    setMoves(moves + 1);
   };
 
   useEffect(() => {
@@ -77,6 +78,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
           isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))} />
       ))}
       <p>Score: {score}</p>
+      <p>Moves: {moves}</p>
       <button onClick={onEndGame}>End Game</button>
     </div>
   );
