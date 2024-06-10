@@ -87,6 +87,14 @@ code .
 npm start
 ```
 
+### Installing the server to Save Player Scores
+1. Go to the server directory using `cd server`.
+2. Start the server using `node .\saveGame.js`, which listens on port 5000.
+
+`Note`: Score will be saved in a file named `game_data.json` in the data directory
+
+Feel free to explore the code and customize it according to your needs.
+
 ## Using GitHub and GitHub Copilot
 
 GitHub is a web-based hosting service for version control. You can learn more about how to use GitHub repositories [here](https://docs.github.com/en/github).
