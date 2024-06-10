@@ -1,25 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Common.css';
 import '../styles/SplashScreen.css';
-
-/*
-    This is the SplashScreen component that will be displayed when the game starts.
-    It will display a welcome message and a button to start the game.
-    Optionally, we can add some instructions or a brief description of the game here
-    along with other options such as settings for the game including type of and number
-    of cards, and difficulty level.
-
-*/
 
 interface SplashScreenProps {
   onStartGame: () => void; // Prop function to start the game
 }
 
+interface GameData {
+  score: number;
+  moves: number;
+  gameTime: number;
+}
+
 const SplashScreen: React.FC<SplashScreenProps> = ({ onStartGame }) => {
+  const [gameData, setGameData] = useState<GameData | null>(null);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/getGame')
+      .then(response => response.json())
+      .then(data => setGameData(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
+
   return (
     <div className="screen">
       <h1>Welcome to My Game App!!</h1>
-      <p>This is the splash screen of the game.</p>
+      <p>Previous score(s) of the game.</p>
+      {gameData ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Moves</th>
+              <th>Game Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gameData.map((game, index) => (
+              <tr key={index}>
+                <td>{game.score}</td>
+                <td>{game.moves}</td>
+                <td>{game.gameTime}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>Loading game data...</p>
+      )}
       <button onClick={onStartGame}>Start Game</button>
     </div>
   );
