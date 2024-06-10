@@ -6,14 +6,14 @@ interface SplashScreenProps {
   onStartGame: () => void; // Prop function to start the game
 }
 
-interface GameData {
+type GameData = {
   score: number;
   moves: number;
   gameTime: number;
 }
 
 const SplashScreen: React.FC<SplashScreenProps> = ({ onStartGame }) => {
-  const [gameData, setGameData] = useState<GameData | null>(null);
+  const [gameData, setGameData] = useState<GameData[]>([]);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/getGame')
@@ -26,7 +26,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onStartGame }) => {
     <div className="screen">
       <h1>Welcome to My Game App!!</h1>
       <p>Previous score(s) of the game.</p>
-      {gameData ? (
+      {gameData.length > 0 ? (
         <table>
           <thead>
             <tr>
