@@ -1,6 +1,25 @@
 .gamescreen {
-  display: grid;
+  display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  justify-items: center;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }

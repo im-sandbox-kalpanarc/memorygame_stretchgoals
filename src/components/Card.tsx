@@ -18,7 +18,7 @@ const Card: React.FC<CardProps> = ({ cardNumber, onClick, isFlipped }) => {
       {isFlipped
         ? <> {`${cardNumber}`}
           <img style={{ width: '70px', height: '70px' }} src={`${process.env.PUBLIC_URL}/images/${cardNumber}.png`} alt={`Card ${cardNumber}`} /></>
-        : <> {`${cardNumber}`} <img style={{ width: '90px', height: '90px' }} src={`${process.env.PUBLIC_URL}/images/clickme.jpeg`} /></>
+        : <> {`${cardNumber}`} <img style={{ width: '85px', height: '85px' }} src={`${process.env.PUBLIC_URL}/images/clickme.jpeg`} /></>
       }
     </div>
   );

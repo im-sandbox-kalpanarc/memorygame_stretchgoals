@@ -90,18 +90,36 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
     generateCards();
   }, []);
 
+  const resetGame = () => {
+    setCards([]);
+    setClickedCards([]);
+    setMatchedCards([]);
+    setScore(0);
+    setMoves(0);
+    setStartTime(null);
+    setEndTime(null);
+    generateCards(); // regenerate the cards for the new game
+  };
+
   return (
-    <div className="gamescreen" style={{ gridTemplateColumns: `repeat(${x}, 1fr)` }}>
-      {cards.map((cardNumber, index) => (
-        <Card key={index} cardNumber={cardNumber} onClick={() => handleCardClick(index)}
-          isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))} />
-      ))}
-      <p>Score: {score}</p>
-      <p>Moves: {moves}</p>
-      <p>Time taken: {formattedTime}</p>
-      <button onClick={onEndGame}>End Game</button>
+    <div className="gamescreen">
+      <div className="game-info">
+        <p>Score: {score}</p>
+        <p>Moves: {moves}</p>
+        <p>Time taken: {formattedTime}</p>
+      </div>
+      <div className="cards">
+        {cards.map((cardNumber, index) => (
+          <Card key={index} cardNumber={cardNumber} onClick={() => handleCardClick(index)}
+            isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))} />
+        ))}
+      </div>
+      <div className="game-controls">
+        <button onClick={onEndGame}>End Game</button>
+        <button onClick={resetGame}>Reset Game</button>
+      </div>
     </div>
   );
-};
+}
 
 export default GameScreen;
