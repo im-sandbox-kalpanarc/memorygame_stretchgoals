@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/GameScreen.css';
 import Card from './Card';
 
 interface Props {
   x: number;
   y: number;
-  onEndGame: () => void;
+  onEndGame: (score: number, timeTaken: number) => void;
 }
 
 const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
@@ -18,10 +18,11 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const maxScore = totalCards / 2;
-  const timeTaken = startTime ? ((endTime || new Date()).getTime() - startTime.getTime()) / 1000 : 0;
-  const minutes = Math.floor(timeTaken / 60);
-  const seconds = Math.floor(timeTaken % 60);
+  const gameTime = startTime ? Math.floor(((endTime || new Date()).getTime() - startTime.getTime()) / 1000) : 0;
+  const minutes = Math.floor(gameTime / 60);
+  const seconds = Math.floor(gameTime % 60);
   const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
 
   // Start the timer when the game starts
   useEffect(() => {
@@ -101,6 +102,39 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
     generateCards(); // regenerate the cards for the new game
   };
 
+  const handleEndGame = useCallback(() => {
+    setEndTime(new Date());
+    console.log('Game Over123! Score:', score, 'Time Taken:', gameTime);
+    onEndGame(score, gameTime);
+  }, [score, gameTime, onEndGame]
+  );
+
+  const saveGameToJson = () => {
+    const gameData = {
+      score,
+      moves,
+      gameTime,
+    };
+
+    fetch('http://localhost:5000/api/savePlayerGame', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(gameData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => console.log(data.message))
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
   return (
     <div className="gamescreen">
       <div className="game-info">
@@ -115,8 +149,9 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
         ))}
       </div>
       <div className="game-controls">
-        <button onClick={onEndGame}>End Game</button>
+        <button onClick={handleEndGame}>End Game</button>
         <button onClick={resetGame}>Reset Game</button>
+        <button onClick={saveGameToJson}>Save Game</button>
       </div>
     </div>
   );
