@@ -41,12 +41,16 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
         const secondCard = newClickedCards[1].value;
 
         if (firstCard === secondCard) {
-          setMatchedCards((prevMatched) => [...prevMatched, firstCard]);
+          setMatchedCards((prevMatched) => {
+            const newMatchedCards = [...prevMatched, firstCard];
 
-          // Only add the card to scoredCards if it's not already there
-          if (!scoredCards.includes(firstCard)) {
-            setScoredCards((prevScored) => [...prevScored, firstCard]);
-          }
+            // Only add the card to scoredCards if both it and its pair have been matched
+            if (newMatchedCards.filter(card => card === firstCard).length === 2) {
+              setScoredCards((prevScored) => [...prevScored, firstCard]);
+            }
+
+            return newMatchedCards;
+          });
         }
         setTimeout(() => {
           setClickedCards([]);
