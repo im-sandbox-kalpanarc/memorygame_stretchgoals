@@ -25,7 +25,6 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
 
   // Run generateCards once when the component mounts
   useEffect(() => { generateCards(); }, []);
-
   const [scoredCards, setScoredCards] = useState<number[]>([]);
 
   const handleCardClick = (index: number) => {
@@ -52,6 +51,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
             return newMatchedCards;
           });
         }
+        // If the cards don't match, flip them back after 1 second
         setTimeout(() => {
           setClickedCards([]);
         }, 1000);
@@ -73,12 +73,8 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   return (
     <div className="gamescreen" style={{ gridTemplateColumns: `repeat(${x}, 1fr)` }}>
       {cards.map((cardNumber, index) => (
-        <Card
-          key={index}
-          cardNumber={cardNumber}
-          onClick={() => handleCardClick(index)}
-          isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))}
-        />
+        <Card key={index} cardNumber={cardNumber} onClick={() => handleCardClick(index)}
+          isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))} />
       ))}
       <p>Score: {score}</p>
       <button onClick={onEndGame}>End Game</button>
