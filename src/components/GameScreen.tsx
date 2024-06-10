@@ -17,7 +17,7 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
 
   // Function to generate a shuffled array of card numbers
   const generateCards = () => {
-    let arr = Array.from({ length: totalCards }, (_, i) => i + 1);
+    let arr = Array.from({ length: totalCards / 2 }, (_, i) => i + 1);
     arr = [...arr, ...arr]; // duplicate the array to create pairs
     arr.sort(() => Math.random() - 0.5); // shuffle the array
     setCards(arr);
