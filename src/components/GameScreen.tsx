@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/GameScreen.css';
-import Card from './Card'; // import the Card component
-
-/*
-    This is the GameScreen component that will be displayed when the game is in progress.
-    It will display the grid of cards and a button to end the game.
-    Optionally, we can add a timer, a score, and other game-related information here.
-    We need to keep track of the state of each card, the number of cards, and the type of cards
-    and implement the logic to check if two cards are a match. If they are a match, we can
-    update the state of the cards to indicate that they are matched. If they are not a match,
-    we can flip the cards back over.
-*/
+import Card from './Card';
 
 interface Props {
-  // keep track of the number of cards in the x and y grid
   x: number;
   y: number;
-  onEndGame: () => void; // Prop function to end the game
+  onEndGame: () => void;
 }
 
 const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   const totalCards = x * y;
   const [cards, setCards] = useState<number[]>([]);
+  const [clickedCards, setClickedCards] = useState<{ index: number, value: number }[]>([]);
+  const [matchedCards, setMatchedCards] = useState<number[]>([]);
+  const [score, setScore] = useState<number>(0);
 
   // Function to generate a shuffled array of card numbers
   const generateCards = () => {
@@ -32,6 +24,44 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   };
 
   // Run generateCards once when the component mounts
+  useEffect(() => { generateCards(); }, []);
+
+  const [scoredCards, setScoredCards] = useState<number[]>([]);
+
+  const handleCardClick = (index: number) => {
+    if (clickedCards.length === 2) {
+      return;
+    }
+
+    setClickedCards((prev) => {
+      const newClickedCards = [...prev, { index, value: cards[index] }];
+
+      if (newClickedCards.length === 2) {
+        const firstCard = newClickedCards[0].value;
+        const secondCard = newClickedCards[1].value;
+
+        if (firstCard === secondCard) {
+          setMatchedCards((prevMatched) => [...prevMatched, firstCard]);
+
+          // Only add the card to scoredCards if it's not already there
+          if (!scoredCards.includes(firstCard)) {
+            setScoredCards((prevScored) => [...prevScored, firstCard]);
+          }
+        }
+        setTimeout(() => {
+          setClickedCards([]);
+        }, 1000);
+      }
+      return newClickedCards;
+    });
+  };
+
+  useEffect(() => {
+    if (scoredCards.length > score) {
+      setScore(scoredCards.length);
+    }
+  }, [scoredCards]);
+
   useEffect(() => {
     generateCards();
   }, []);
@@ -39,8 +69,14 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
   return (
     <div className="gamescreen" style={{ gridTemplateColumns: `repeat(${x}, 1fr)` }}>
       {cards.map((cardNumber, index) => (
-        <Card key={index} cardNumber={cardNumber} />
+        <Card
+          key={index}
+          cardNumber={cardNumber}
+          onClick={() => handleCardClick(index)}
+          isFlipped={!!(clickedCards.find(card => card.index === index) || matchedCards.includes(cardNumber))}
+        />
       ))}
+      <p>Score: {score}</p>
       <button onClick={onEndGame}>End Game</button>
     </div>
   );
