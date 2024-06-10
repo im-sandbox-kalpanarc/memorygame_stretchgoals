@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/GameScreen.css';
 import Card from './Card'; // import the Card component
 
@@ -20,12 +20,26 @@ interface Props {
 }
 
 const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
-  const cards = Array.from({ length: x * y }, (_, i) => i + 1);
+  const totalCards = x * y;
+  const [cards, setCards] = useState<number[]>([]);
+
+  // Function to generate a shuffled array of card numbers
+  const generateCards = () => {
+    let arr = Array.from({ length: totalCards }, (_, i) => i + 1);
+    arr = [...arr, ...arr]; // duplicate the array to create pairs
+    arr.sort(() => Math.random() - 0.5); // shuffle the array
+    setCards(arr);
+  };
+
+  // Run generateCards once when the component mounts
+  useEffect(() => {
+    generateCards();
+  }, []);
 
   return (
     <div className="gamescreen" style={{ gridTemplateColumns: `repeat(${x}, 1fr)` }}>
-      {cards.map((card) => (
-        <Card key={card} cardNumber={card} />
+      {cards.map((cardNumber, index) => (
+        <Card key={index} cardNumber={cardNumber} />
       ))}
       <button onClick={onEndGame}>End Game</button>
     </div>
