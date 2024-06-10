@@ -102,16 +102,19 @@ const GameScreen: React.FC<Props> = ({ x, y, onEndGame }) => {
     generateCards(); // regenerate the cards for the new game
   };
 
+  let finalScore = 0;
+
   const handleEndGame = useCallback(() => {
     setEndTime(new Date());
-    console.log('Game Over123! Score:', score, 'Time Taken:', gameTime);
-    onEndGame(score, gameTime);
-  }, [score, gameTime, onEndGame]
-  );
+    finalScore = maxScore - (moves / 2) - (gameTime / 120);
+    finalScore = Math.max(finalScore, maxScore / 2);
+    console.log('Game Over! Score:', finalScore, 'Time Taken:', gameTime);
+    onEndGame(finalScore, gameTime);
+  }, [moves, gameTime, onEndGame]);
 
   const saveGameToJson = () => {
     const gameData = {
-      score,
+      score: finalScore,
       moves,
       gameTime,
     };
